@@ -36,49 +36,6 @@ subprojects {
     version = artifactPublish
     group = artifactGroupId
 
-    //publishing
-    configure<PublishingExtension> {
-
-        val sourceSets = project.the<SourceSetContainer>()
-
-        val sourcesJar by tasks.registering(Jar::class) {
-            from(sourceSets["main"].allSource)
-            classifier = "sources"
-        }
-
-        val javadocJar by tasks.creating(Jar::class) {
-            val doc by tasks.creating(Javadoc::class) {
-                isFailOnError = false
-                source = sourceSets["main"].allJava
-            }
-
-            dependsOn(doc)
-            from(doc)
-
-            classifier = "javadoc"
-        }
-
-        publications {
-            register(project.name, MavenPublication::class) {
-                from(components["java"])
-                artifact(sourcesJar.get())
-                artifact(javadocJar)
-                groupId = artifactGroupId
-                artifactId = project.name
-                version = artifactPublish
-
-                pom {
-                    licenses {
-                        license {
-                            name.set("MIT License")
-                            url.set("http://www.opensource.org/licenses/mit-license.php")
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     // bintray
     configure<BintrayExtension> {
         user = findProperty("BINTRAY_USER") as? String
